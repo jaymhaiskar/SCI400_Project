@@ -15,3 +15,4 @@ Q2) should I take the avg of cosine similarity? as in, each article is compared 
 Data cleaning:
 - remove any rows with null values
 - remove duplicates articles
+- remove â€™ from body
