@@ -28,5 +28,9 @@ CREATE TABLE articles (
 );
 
 
-When I try to access Gemini API by import (pip install google-genai) it gives me the error: AttributeError: partially initialized module 'google.genai' has no attribute 'Client' (most likely due to a circular import)
+When I try to access Gemini API thru random.py by import (pip install google-genai) it gives me the error: AttributeError: partially initialized module 'google.genai' has no attribute 'Client' (most likely due to a circular import)
+
+When I try to access Grok and ChatGPT API thru api_practice.py after trying to access gemini I get the error: ImportError: cannot import name 'compat32' from partially initialized module 'email._policybase' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/email/_policybase.py)
+
+
 
