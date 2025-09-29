@@ -32,5 +32,6 @@ When I try to access Gemini API thru random.py by import (pip install google-gen
 
 When I try to access Grok and ChatGPT API thru api_practice.py after trying to access gemini I get the error: ImportError: cannot import name 'compat32' from partially initialized module 'email._policybase' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/email/_policybase.py)
 
+When I try to call gemini through openAI I get the error ImportError: cannot import name 'OpenAI' from partially initialized module 'openai' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/site-packages/openai/__init__.py)
 
 
