@@ -24,69 +24,67 @@ def clean_text(text):
     return " ".join(word for word in words if word not in filler_words)
 
 def text_to_set(text):
+    # print("def text to set reached", set(re.findall(r"\b\w+\b", clean_text(text).lower())))
     return set(re.findall(r"\b\w+\b", clean_text(text).lower()))
 
 def text_to_counter(text):
+    # print("def text to counter reached")
     return Counter(re.findall(r"\b\w+\b", clean_text(text).lower()))
 
 def jaccard_similarity(text1, text2):
+    # print("def jaccard reached")
     set1, set2 = text_to_set(text1), text_to_set(text2)
-    if not set1 or not set2:
-        return 0.0
+    if set1 and set2:
+        # print("inside if statement")
         return len(set1 & set2) / len(set1 | set2)
 
 def cosine_similarity(text1, text2):
+    # print("def cosine reached")
     counter1, counter2 = text_to_counter(text1), text_to_counter(text2)
     common = set(counter1) & set(counter2)
     dot_product = sum(counter1[w] * counter2[w] for w in common)
     mag1 = math.sqrt(sum(v**2 for v in counter1.values()))
     mag2 = math.sqrt(sum(v**2 for v in counter2.values()))
-    if mag1 == 0 or mag2 == 0:
-        return 0.0
+    if mag1 and mag2:
         return dot_product / (mag1 * mag2)
                                                             
 # ---------------------------
 # Fetch data from DB
 # ---------------------------
-conn = sqlite3.connect("articles.db")  # change to your db
+conn = sqlite3.connect("articles.db")  # your DB file
 cursor = conn.cursor()
-cursor.execute("SELECT id, Gemini_Summaries, ChatGPT_Summaries FROM articles where ChatGPT_Summaries is not null")
+cursor.execute("""
+    SELECT Gemini_repeated_summaries
+    FROM repeated_summaries
+    WHERE Gemini_repeated_summaries IS NOT NULL
+    ORDER BY id
+""")
 rows = cursor.fetchall()
 conn.close()
+
+# Flatten to list
+summaries = [r[0] for r in rows]
+# print(summaries)
 
 # ---------------------------
 # Compute similarities
 # ---------------------------
 results = []
-for row in rows:
-    article_id, chatgpt_sum, gemini_sum = row
-    if chatgpt_sum and gemini_sum:
-        jaccard = jaccard_similarity(chatgpt_sum, gemini_sum)
-        cosine = cosine_similarity(chatgpt_sum, gemini_sum)
-        results.append((article_id, round(jaccard, 3), round(cosine, 3)))
-    else:
-        results.append((article_id, None, None))
+if len(summaries) > 1:
+    base = summaries[0]
+    # print(base)
+    for i in range(1, len(summaries)):
+        jaccard = jaccard_similarity(base, summaries[i])
+        print(jaccard)
+        # print("jaccard reached", jaccard)
+        cosine = cosine_similarity(base, summaries[i])
+        results.append((f"1 vs {i+1}", round(jaccard, 3), round(cosine, 3)))
 
-# Put into DataFrame
-df = pd.DataFrame(results, columns=["Article ID", "Jaccard", "Cosine"])
-
+# ---------------------------
+# Save to CSV
+# ---------------------------
+df = pd.DataFrame(results, columns=["Comparison", "Jaccard", "Cosine"])
 print(df)
 
-# ---------------------------
-# Save table as PNG
-# ---------------------------
-# fig, ax = plt.subplots(figsize=(8, len(df) * 0.5 + 1))
-# ax.axis("off")
-# table = ax.table(cellText=df.values, colLabels=df.columns, cellLoc="center", loc="center")
-
-# table.auto_set_font_size(False)
-# table.set_fontsize(10)
-# table.scale(1.2, 1.2)
-
-# plt.tight_layout()
-# plt.savefig("ChatGPT-Grok-articles-similarity.png", dpi=300)
-# plt.close()
-
-
-#----- Save Table as CSV -------------------------------
-df.to_csv("Gemini-ChatGPT-articles-similarity.csv", index=False)
+df.to_csv("Gemini_Repeated_Similarity.csv", index=False)
+print("✅ Saved as Gemini_Repeated_Summaries.csv")
