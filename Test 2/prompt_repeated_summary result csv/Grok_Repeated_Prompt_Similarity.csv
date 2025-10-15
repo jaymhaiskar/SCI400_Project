@@ -1,0 +1,10 @@
+Comparison,Jaccard,Cosine
+1 vs Prompt ,0.369,0.605
+2 vs Prompt ,0.361,0.606
+3 vs Prompt ,0.347,0.603
+4 vs Prompt ,0.368,0.604
+5 vs Prompt ,0.382,0.602
+6 vs Prompt ,0.387,0.611
+7 vs Prompt ,0.316,0.591
+8 vs Prompt ,0.378,0.612
+9 vs Prompt ,0.419,0.64

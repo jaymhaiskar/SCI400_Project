@@ -54,12 +54,21 @@ def cosine_similarity(text1, text2):
 conn = sqlite3.connect("articles.db")  # your DB file
 cursor = conn.cursor()
 cursor.execute("""
-    SELECT ChatGPT_repeated_summaries
+    SELECT Grok_repeated_summaries
     FROM repeated_summaries
-    WHERE ChatGPT_repeated_summaries IS NOT NULL
+    WHERE Grok_repeated_summaries IS NOT NULL
     ORDER BY id
 """)
 rows = cursor.fetchall()
+
+cursor.execute("""
+    SELECT prompt
+    FROM articles
+    WHERE id = 1
+""")
+prompt = cursor.fetchall()[0][0]
+
+print(prompt)
 conn.close()
 
 # Flatten to list
@@ -71,14 +80,14 @@ summaries = [r[0] for r in rows]
 # ---------------------------
 results = []
 if len(summaries) > 1:
-    base = summaries[0]
+    base = prompt
     # print(base)
     for i in range(1, len(summaries)):
         jaccard = jaccard_similarity(base, summaries[i])
         print(jaccard)
         # print("jaccard reached", jaccard)
         cosine = cosine_similarity(base, summaries[i])
-        results.append((f"1 vs {i+1}", round(jaccard, 3), round(cosine, 3)))
+        results.append((f"{i} vs Prompt ", round(jaccard, 3), round(cosine, 3)))
 
 # ---------------------------
 # Save to CSV
@@ -86,5 +95,5 @@ if len(summaries) > 1:
 df = pd.DataFrame(results, columns=["Comparison", "Jaccard", "Cosine"])
 print(df)
 
-df.to_csv("ChatGPT_Repeated_Similarity.csv", index=False)
-print("✅ Saved as Gemini_Repeated_Summaries.csv")
+df.to_csv("Grok_Repeated_Prompt_Similarity.csv", index=False)
+print("✅ Saved as GEmini_Repeated_Summaries.csv")
