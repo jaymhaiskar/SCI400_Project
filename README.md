@@ -18,15 +18,6 @@ Data cleaning:
 - remove â€™ from body
 
 
-
-RESOLVED: When I try to access Gemini API thru random.py by import (pip install google-genai) it gives me the error: AttributeError: partially initialized module 'google.genai' has no attribute 'Client' (most likely due to a circular import)
-
-RESOLVED: When I try to access Grok and ChatGPT API thru api_practice.py after trying to access gemini I get the error: ImportError: cannot import name 'compat32' from partially initialized module 'email._policybase' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/email/_policybase.py)
-
-RESOLVED: When I try to call gemini through openAI I get the error ImportError: cannot import name 'OpenAI' from partially initialized module 'openai' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/site-packages/openai/__init__.py)
-
-ISSUE: don't label file random.py, system thought it was a circular input from the random module in pycache
-
 for repeated summaries
 - make another table called: repeated summaries w/ prompt, ChatGPT_repeated_summaries, Gemini_repeated_summaries, Grok_repeated_summaries as columns
 - make another python file to measure jaccard and cosine similarity of repeated summaries, compare summary #1 to rest of the summaries in column
@@ -38,3 +29,17 @@ for repeated summaries
 
 repeated_summaries table structure for jaccard and cosine similarity
 ![alt text](image.png)
+
+Questions for Jason:
+
+RESOLVED: When I try to access Gemini API thru random.py by import (pip install google-genai) it gives me the error: AttributeError: partially initialized module 'google.genai' has no attribute 'Client' (most likely due to a circular import)
+
+RESOLVED: When I try to access Grok and ChatGPT API thru api_practice.py after trying to access gemini I get the error: ImportError: cannot import name 'compat32' from partially initialized module 'email._policybase' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/email/_policybase.py)
+
+RESOLVED: When I try to call gemini through openAI I get the error ImportError: cannot import name 'OpenAI' from partially initialized module 'openai' (most likely due to a circular import) (/home/codespace/.python/current/lib/python3.12/site-packages/openai/__init__.py)
+
+ISSUE: don't label file random.py, system thought it was a circular input from the random module in pycache
+
+Show Jason results of similarity scores and stat tests
+
+**compare cosine similarity of summary given by model model with the original articles**

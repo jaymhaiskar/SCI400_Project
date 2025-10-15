@@ -54,9 +54,9 @@ def cosine_similarity(text1, text2):
 conn = sqlite3.connect("articles.db")  # your DB file
 cursor = conn.cursor()
 cursor.execute("""
-    SELECT Gemini_repeated_summaries
+    SELECT ChatGPT_repeated_summaries
     FROM repeated_summaries
-    WHERE Gemini_repeated_summaries IS NOT NULL
+    WHERE ChatGPT_repeated_summaries IS NOT NULL
     ORDER BY id
 """)
 rows = cursor.fetchall()
@@ -86,5 +86,5 @@ if len(summaries) > 1:
 df = pd.DataFrame(results, columns=["Comparison", "Jaccard", "Cosine"])
 print(df)
 
-df.to_csv("Gemini_Repeated_Similarity.csv", index=False)
+df.to_csv("ChatGPT_Repeated_Similarity.csv", index=False)
 print("✅ Saved as Gemini_Repeated_Summaries.csv")

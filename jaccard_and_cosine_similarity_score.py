@@ -29,11 +29,23 @@ def text_to_set(text):
 def text_to_counter(text):
     return Counter(re.findall(r"\b\w+\b", clean_text(text).lower()))
 
-def jaccard_similarity(text1, text2):
-    set1, set2 = text_to_set(text1), text_to_set(text2)
-    if not set1 or not set2:
-        return 0.0
-        return len(set1 & set2) / len(set1 | set2)
+# def jaccard_similarity(text1, text2):
+#     set1, set2 = text_to_set(text1), text_to_set(text2)
+#     if not set1 or not set2:
+#         # return 0.0
+#         return len(set1 & set2) / len(set1 | set2)
+
+def jaccard_similarity(text1, text2): 
+    """Compute Jaccard similarity between two texts.""" 
+    set1 = text_to_set(text1) 
+    set2 = text_to_set(text2) 
+    
+    intersection = set1 & set2 
+    union = set1 | set2 
+    
+    if not union: 
+        return 0.0 
+    return len(intersection) / len(union)       
 
 def cosine_similarity(text1, text2):
     counter1, counter2 = text_to_counter(text1), text_to_counter(text2)
@@ -43,14 +55,14 @@ def cosine_similarity(text1, text2):
     mag2 = math.sqrt(sum(v**2 for v in counter2.values()))
     if mag1 == 0 or mag2 == 0:
         return 0.0
-        return dot_product / (mag1 * mag2)
+    return dot_product / (mag1 * mag2)
                                                             
 # ---------------------------
 # Fetch data from DB
 # ---------------------------
 conn = sqlite3.connect("articles.db")  # change to your db
 cursor = conn.cursor()
-cursor.execute("SELECT id, Gemini_Summaries, ChatGPT_Summaries FROM articles where ChatGPT_Summaries is not null")
+cursor.execute("SELECT id, Grok_Summaries, prompt FROM articles where Grok_Summaries is not null")
 rows = cursor.fetchall()
 conn.close()
 
@@ -61,8 +73,11 @@ results = []
 for row in rows:
     article_id, chatgpt_sum, gemini_sum = row
     if chatgpt_sum and gemini_sum:
+        
         jaccard = jaccard_similarity(chatgpt_sum, gemini_sum)
+        # print("jaccard",jaccard)
         cosine = cosine_similarity(chatgpt_sum, gemini_sum)
+        # print("cosine",cosine)
         results.append((article_id, round(jaccard, 3), round(cosine, 3)))
     else:
         results.append((article_id, None, None))
@@ -89,4 +104,4 @@ print(df)
 
 
 #----- Save Table as CSV -------------------------------
-df.to_csv("Gemini-ChatGPT-articles-similarity.csv", index=False)
+df.to_csv("Grok-Prompt-articles-similarity.csv", index=False)
